@@ -1,0 +1,125 @@
+USE om; 
+SELECT CONCAT (customer_last_name, ", " , customer_first_name) AS "Customer Name", 
+CONCAT("Contact #: ", customer_phone) AS "Customer Contact Number",
+CONCAT(customer_address, ",", customer_city,",", customer_state, customer_zip) AS "Customer Adress"
+FROM customers
+WHERE customer_last_name > "B" AND customer_last_name < "F"
+ORDER BY customer_last_name;
+----------------------------------------------------------------------------------------------------------------------------------------
+
+SELECT order_id AS "Order ID", order_date, shipped_date
+FROM orders
+WHERE order_id >= 773 
+  AND order_id <= 829
+  ;
+----------------------------------------------------------------------------------------------------------------------------------------
+
+SELECT 
+vendor_name, 
+CONCAT("INV-",invoice_number) as"Invoice Info", 
+invoice_total, 
+invoice_date, 
+invoice_due_date, 
+DATEDIFF(invoice_due_date,invoice_date) AS "Days Between",
+terms_description 
+FROM invoices
+JOIN vendors 
+ON vendors.vendor_id = invoices.vendor_id
+JOIN terms 
+ON terms.terms_id = invoices.terms_id
+ORDER BY vendor_name
+;
+----------------------------------------------------------------------------------------------------------------------------------------
+
+USE ap;
+SELECT 
+vendor_name as "Vendor",
+invoice_number as "Invoice Number",
+DATE_FORMAT(invoice_date, '%M %e, %Y') as "Invoice Date", 
+CONCAT("$",invoice_total) as "Invoice Date", 
+CONCAT("$",payment_total) as "Invoice Total"
+FROM invoices
+RIGHT JOIN vendors
+ON vendors.vendor_id = invoices.vendor_id
+ORDER BY vendor_name
+;
+----------------------------------------------------------------------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS customers_copy;
+CREATE TABLE customers_copy LIKE customers;
+INSERT INTO customers_copy SELECT* FROM customers;
+
+DROP TABLE IF EXISTS orders_copy;
+CREATE TABLE orders_copy LIKE orders;
+INSERT INTO orders_copy SELECT* FROM orders;
+
+DROP TABLE IF EXISTS order_items_copy;
+CREATE TABLE order_items_copy LIKE order_items;
+INSERT INTO order_items_copy SELECT* FROM order_items;
+
+INSERT INTO customers_copy 
+VALUES (9, 'xyzabc@gmail.com', '12345677654321', 'Unreal', 'Person', NULL, NULL);
+
+INSERT INTO orders_copy 
+VALUES ( 10, 9, '2020-12-01 23:10:42', 10.00, 0.00, NULL, 119, 'Visa', '1111111111111111', '05/22', 19 );
+
+INSERT INTO order_items_copy
+VALUES (16,10,1,699.00,209.70,1);
+
+INSERT INTO order_items_copy
+VALUES (17, 10, 10, 799.99, 120.00, 1);
+
+SELECT *
+FROM customers_copy;
+
+SELECT *
+FROM orders_copy;
+
+SELECT *
+FROM order_items_copy;
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+UPDATE order_items_copy
+SET product_id = 7,
+discount_amount = 240.00
+WHERE item_id = 17;
+SET SQL_SAFE_UPDATES = 0;
+
+SELECT 
+  CONCAT(first_name, ' ', last_name) AS customer_name,
+  order_date,
+  ship_date,
+  product_name,
+  list_price AS standard_price,
+  ROUND(list_price * discount_percent / 100, 2) AS discount,
+  ROUND(list_price - (list_price * discount_percent / 100), 2) AS actual_price
+FROM customers_copy
+JOIN orders_copy USING (customer_id)
+JOIN order_items_copy USING (order_id)
+JOIN products USING (product_id)
+WHERE ship_date IS NULL
+ORDER BY customer_name;
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+DELETE FROM order_items_copy 
+WHERE order_id = 10;
+
+DELETE FROM orders_copy 
+WHERE order_id = 10;
+
+SELECT 
+  CONCAT(first_name, ' ', last_name) AS customer_name,
+  order_date,
+  ship_date,
+  product_name,
+  list_price AS standard_price,
+  ROUND(list_price * discount_percent / 100, 2) AS discount,
+  ROUND(list_price - (list_price * discount_percent / 100), 2) AS actual_price
+FROM customers_copy
+JOIN orders_copy USING (customer_id)
+JOIN order_items_copy USING (order_id)
+JOIN products USING (product_id)
+WHERE ship_date IS NULL
+ORDER BY customer_name;
