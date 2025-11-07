@@ -1,0 +1,153 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema ev_population_inst327
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema ev_population_inst327
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `ev_population_inst327` DEFAULT CHARACTER SET utf8 ;
+USE `ev_population_inst327` ;
+
+-- -----------------------------------------------------
+-- Table `ev_population_inst327`.`make`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `ev_population_inst327`.`make` (
+  `make_id` INT NOT NULL AUTO_INCREMENT,
+  `car_make` VARCHAR(45) NULL,
+  PRIMARY KEY (`make_id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `ev_population_inst327`.`model`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `ev_population_inst327`.`model` (
+  `model_id` INT NOT NULL AUTO_INCREMENT,
+  `model_type` VARCHAR(45) NULL,
+  `model_year` YEAR(4) NULL,
+  PRIMARY KEY (`model_id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `ev_population_inst327`.`cafv`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `ev_population_inst327`.`cafv` (
+  `cafv_id` INT NOT NULL AUTO_INCREMENT,
+  `cafv_elgibility` VARCHAR(45) NULL,
+  PRIMARY KEY (`cafv_id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `ev_population_inst327`.`electrict_utility`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `ev_population_inst327`.`electrict_utility` (
+  `eu_id` INT NOT NULL AUTO_INCREMENT,
+  `electric_utility` VARCHAR(45) NULL,
+  PRIMARY KEY (`eu_id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `ev_population_inst327`.`location`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `ev_population_inst327`.`location` (
+  `dol_vehicle_id` INT NOT NULL AUTO_INCREMENT,
+  `country` VARCHAR(45) NULL,
+  `city` VARCHAR(45) NULL,
+  `state` VARCHAR(45) NULL,
+  `postal_code` INT NULL,
+  `legislative_district` INT NULL,
+  `vehicle_location` INT NULL,
+  `2020_census_tract` INT NULL,
+  PRIMARY KEY (`dol_vehicle_id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `ev_population_inst327`.`cars`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `ev_population_inst327`.`cars` (
+  `vin_number` INT NOT NULL,
+  `ev_type` VARCHAR(45) NULL,
+  `electric_range` VARCHAR(45) NULL,
+  `base_msrp` INT NULL,
+  `make_id` INT NOT NULL,
+  `model_id` INT NOT NULL,
+  `cafv_id` INT NOT NULL,
+  PRIMARY KEY (`vin_number`),
+  INDEX `fk_Cars_Make_idx` (`make_id` ASC) VISIBLE,
+  INDEX `fk_cars_model1_idx` (`model_id` ASC) VISIBLE,
+  INDEX `fk_cars_cafv1_idx` (`cafv_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Cars_Make`
+    FOREIGN KEY (`make_id`)
+    REFERENCES `ev_population_inst327`.`make` (`make_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_cars_model1`
+    FOREIGN KEY (`model_id`)
+    REFERENCES `ev_population_inst327`.`model` (`model_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_cars_cafv1`
+    FOREIGN KEY (`cafv_id`)
+    REFERENCES `ev_population_inst327`.`cafv` (`cafv_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `ev_population_inst327`.`location_utility`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `ev_population_inst327`.`location_utility` (
+  `utility_eu_id` INT NOT NULL,
+  `dol_vehicle_id` INT NOT NULL,
+  PRIMARY KEY (`utility_eu_id`, `dol_vehicle_id`),
+  INDEX `fk_location_utility_Location1_idx` (`dol_vehicle_id` ASC) VISIBLE,
+  CONSTRAINT `fk_location_utility_electrict_utility1`
+    FOREIGN KEY (`utility_eu_id`)
+    REFERENCES `ev_population_inst327`.`electrict_utility` (`eu_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_location_utility_Location1`
+    FOREIGN KEY (`dol_vehicle_id`)
+    REFERENCES `ev_population_inst327`.`location` (`dol_vehicle_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `ev_population_inst327`.`car_destination`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `ev_population_inst327`.`car_destination` (
+  `vin_number` INT NOT NULL,
+  `dol_vehicle_id` INT NOT NULL,
+  PRIMARY KEY (`vin_number`, `dol_vehicle_id`),
+  INDEX `fk_car_destination_Location1_idx` (`dol_vehicle_id` ASC) VISIBLE,
+  CONSTRAINT `fk_car_destination_cars1`
+    FOREIGN KEY (`vin_number`)
+    REFERENCES `ev_population_inst327`.`cars` (`vin_number`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_car_destination_Location1`
+    FOREIGN KEY (`dol_vehicle_id`)
+    REFERENCES `ev_population_inst327`.`location` (`dol_vehicle_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
