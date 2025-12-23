@@ -1,0 +1,415 @@
+-- MySQL dump 10.13  Distrib 8.0.43, for macos15 (arm64)
+--
+-- Host: localhost    Database: ev_db
+-- ------------------------------------------------------
+-- Server version	9.4.0
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Temporary view structure for view `avg_msrp_by_ev_type`
+--
+
+DROP TABLE IF EXISTS `avg_msrp_by_ev_type`;
+/*!50001 DROP VIEW IF EXISTS `avg_msrp_by_ev_type`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `avg_msrp_by_ev_type` AS SELECT 
+ 1 AS `ev_type`,
+ 1 AS `avg_msrp`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `cafv`
+--
+
+DROP TABLE IF EXISTS `cafv`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cafv` (
+  `cafv_id` tinyint NOT NULL,
+  `cafv_eligibility` varchar(45) NOT NULL,
+  PRIMARY KEY (`cafv_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cafv`
+--
+
+LOCK TABLES `cafv` WRITE;
+/*!40000 ALTER TABLE `cafv` DISABLE KEYS */;
+INSERT INTO `cafv` VALUES (0,'Not eligible due to low battery range'),(1,'Clean Alternative Fuel Vehicle Eligible');
+/*!40000 ALTER TABLE `cafv` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `car_destination`
+--
+
+DROP TABLE IF EXISTS `car_destination`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `car_destination` (
+  `dol_vehicle_id` int NOT NULL,
+  `vin_number` varchar(50) NOT NULL,
+  PRIMARY KEY (`dol_vehicle_id`,`vin_number`),
+  KEY `fk_car_destination_cars1_idx` (`vin_number`),
+  CONSTRAINT `fk_car_destination_cars1` FOREIGN KEY (`vin_number`) REFERENCES `cars` (`vin_number`),
+  CONSTRAINT `fk_car_destination_location1` FOREIGN KEY (`dol_vehicle_id`) REFERENCES `location` (`dol_vehicle_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `car_destination`
+--
+
+LOCK TABLES `car_destination` WRITE;
+/*!40000 ALTER TABLE `car_destination` DISABLE KEYS */;
+INSERT INTO `car_destination` VALUES (205648530,'1C4JJXR69N'),(160215233,'1G1RA6E40C'),(161629142,'1G6RL1E40G'),(117319653,'1N4AZ1CP3J'),(211631591,'2C4RC1H70K'),(208685060,'3C3CFFGE3D'),(227657153,'3FA6P0PU2E'),(347393252,'537LS7D49C'),(167308886,'5LMYJ9YYXL'),(182942336,'5UXTA6C00N'),(477967829,'5YJ3E1EA3K'),(153969406,'JA4J2VA75M'),(217972723,'JF2GTDNCXK'),(211045775,'JHMZC5F12M'),(232835627,'JTDKARFP0J'),(207092560,'JTJKKCFZ6N'),(140290552,'KM8K33AG8L'),(199455805,'KNDCM3LD9N'),(179303659,'LPSED3KA3M'),(474543625,'LYVBR0DMXK'),(186771742,'SADHC2S15L'),(101520156,'SALWR2RY2L'),(122018970,'SJAAJ2ZV4L'),(135019286,'W1N0G5DB6L'),(169217149,'WAUTPBFF2J'),(122026978,'WMEEJ9AA3E'),(475013661,'WMZYU7C59K'),(132158960,'WP0AC2Y12L'),(133746364,'WVWKP7AU2G'),(172192114,'YH4K14AA6C');
+/*!40000 ALTER TABLE `car_destination` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cars`
+--
+
+DROP TABLE IF EXISTS `cars`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cars` (
+  `vin_number` varchar(50) NOT NULL,
+  `ev_type` varchar(50) NOT NULL,
+  `electric_range` int NOT NULL,
+  `base_msrp` int NOT NULL,
+  `make_id` int NOT NULL,
+  `model_id` int NOT NULL,
+  `cafv_id` tinyint NOT NULL,
+  PRIMARY KEY (`vin_number`),
+  KEY `fk_cars_make1_idx` (`make_id`),
+  KEY `fk_cars_model1_idx` (`model_id`),
+  KEY `fk_cars_cafv1_idx` (`cafv_id`),
+  CONSTRAINT `fk_cars_cafv1` FOREIGN KEY (`cafv_id`) REFERENCES `cafv` (`cafv_id`),
+  CONSTRAINT `fk_cars_make1` FOREIGN KEY (`make_id`) REFERENCES `make` (`make_id`),
+  CONSTRAINT `fk_cars_model1` FOREIGN KEY (`model_id`) REFERENCES `model` (`model_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cars`
+--
+
+LOCK TABLES `cars` WRITE;
+/*!40000 ALTER TABLE `cars` DISABLE KEYS */;
+INSERT INTO `cars` VALUES ('1C4JJXR69N','Plug-in Hybrid Electric Vehicle (PHEV)',22,0,14,14,0),('1G1RA6E40C','Plug-in Hybrid Electric Vehicle (PHEV)',35,0,6,6,1),('1G6RL1E40G','Plug-in Hybrid Electric Vehicle (PHEV)',40,0,5,5,1),('1N4AZ1CP3J','Battery Electric Vehicle (BEV)',151,0,22,22,1),('2C4RC1H70K','Plug-in Hybrid Electric Vehicle (PHEV)',32,39995,7,7,1),('3C3CFFGE3D','Battery Electric Vehicle (BEV)',87,0,8,8,1),('3FA6P0PU2E','Plug-in Hybrid Electric Vehicle (PHEV)',19,0,10,10,0),('537LS7D49C','Battery Electric Vehicle (BEV)',56,0,2,2,1),('5LMYJ9YYXL','Plug-in Hybrid Electric Vehicle (PHEV)',21,0,18,18,0),('5UXTA6C00N','Plug-in Hybrid Electric Vehicle (PHEV)',30,0,4,4,1),('5YJ3E1EA3K','Battery Electric Vehicle (BEV)',220,0,27,27,1),('JA4J2VA75M','Plug-in Hybrid Electric Vehicle (PHEV)',24,0,21,21,0),('JF2GTDNCXK','Plug-in Hybrid Electric Vehicle (PHEV)',17,34995,26,26,0),('JHMZC5F12M','Plug-in Hybrid Electric Vehicle (PHEV)',48,0,11,11,1),('JTDKARFP0J','Plug-in Hybrid Electric Vehicle (PHEV)',25,0,28,28,0),('JTJKKCFZ6N','Plug-in Hybrid Electric Vehicle (PHEV)',37,0,17,17,1),('KM8K33AG8L','Battery Electric Vehicle (BEV)',258,0,12,12,1),('KNDCM3LD9N','Plug-in Hybrid Electric Vehicle (PHEV)',26,0,15,15,0),('LPSED3KA3M','Battery Electric Vehicle (BEV)',233,0,23,23,1),('LYVBR0DMXK','Plug-in Hybrid Electric Vehicle (PHEV)',17,52900,30,30,0),('SADHC2S15L','Battery Electric Vehicle (BEV)',234,0,13,13,1),('SALWR2RY2L','Plug-in Hybrid Electric Vehicle (PHEV)',19,0,16,16,0),('SJAAJ2ZV4L','Plug-in Hybrid Electric Vehicle (PHEV)',18,0,3,3,0),('W1N0G5DB6L','Plug-in Hybrid Electric Vehicle (PHEV)',22,0,19,19,0),('WAUTPBFF2J','Plug-in Hybrid Electric Vehicle (PHEV)',16,0,1,1,0),('WMEEJ9AA3E','Battery Electric Vehicle (BEV)',58,0,25,25,1),('WMZYU7C59K','Plug-in Hybrid Electric Vehicle (PHEV)',12,36900,20,20,0),('WP0AC2Y12L','Battery Electric Vehicle (BEV)',192,0,24,24,1),('WVWKP7AU2G','Battery Electric Vehicle (BEV)',83,0,29,29,1),('YH4K14AA6C','Plug-in Hybrid Electric Vehicle (PHEV)',33,102000,9,9,1);
+/*!40000 ALTER TABLE `cars` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `electric_utility`
+--
+
+DROP TABLE IF EXISTS `electric_utility`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `electric_utility` (
+  `eu_id` int NOT NULL,
+  `electric_utility` varchar(45) NOT NULL,
+  PRIMARY KEY (`eu_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `electric_utility`
+--
+
+LOCK TABLES `electric_utility` WRITE;
+/*!40000 ALTER TABLE `electric_utility` DISABLE KEYS */;
+INSERT INTO `electric_utility` VALUES (1,'OKANOGAN COUNTY ELEC COOP, INC'),(2,'PUGET SOUND ENERGY INC'),(3,'PUD NO 1 OF DOUGLAS COUNTY'),(4,'PACIFICORP'),(5,'CITY OF CHEWELAH'),(6,'MODERN ELECTRIC WATER COMPANY'),(7,'PUD NO 2 OF GRANT COUNTY'),(8,'PUD NO 1 OF CHELAN COUNTY'),(9,'PUD NO 1 OF PEND OREILLE COUNTY'),(10,'PUD NO 1 OF WHATCOM COUNTY'),(11,'AVISTA CORP'),(12,'PUD NO 1 OF OKANOGAN COUNTY'),(13,'CITY OF TACOMA - (WA)'),(14,'CITY OF CHENEY - (WA)'),(15,'PORTLAND GENERAL ELECTRIC CO');
+/*!40000 ALTER TABLE `electric_utility` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `ev_type_statistic`
+--
+
+DROP TABLE IF EXISTS `ev_type_statistic`;
+/*!50001 DROP VIEW IF EXISTS `ev_type_statistic`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `ev_type_statistic` AS SELECT 
+ 1 AS `ev_type`,
+ 1 AS `MIN(electric_range)`,
+ 1 AS `MAX(electric_range)`,
+ 1 AS `AVG(electric_range)`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `evs_with_range_above_200`
+--
+
+DROP TABLE IF EXISTS `evs_with_range_above_200`;
+/*!50001 DROP VIEW IF EXISTS `evs_with_range_above_200`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `evs_with_range_above_200` AS SELECT 
+ 1 AS `vin_number`,
+ 1 AS `car_make`,
+ 1 AS `model_type`,
+ 1 AS `model_year`,
+ 1 AS `ev_type`,
+ 1 AS `electric_range`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `location`
+--
+
+DROP TABLE IF EXISTS `location`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `location` (
+  `dol_vehicle_id` int NOT NULL,
+  `city` varchar(45) NOT NULL,
+  `state` varchar(45) NOT NULL,
+  `postal_code` int NOT NULL,
+  `legislative_district` int NOT NULL,
+  `vehicle_location` varchar(45) NOT NULL,
+  `2020_census_tract` bigint NOT NULL,
+  `county` varchar(45) NOT NULL,
+  PRIMARY KEY (`dol_vehicle_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `location`
+--
+
+LOCK TABLES `location` WRITE;
+/*!40000 ALTER TABLE `location` DISABLE KEYS */;
+INSERT INTO `location` VALUES (101520156,'Cle Elum','WA',98922,13,'POINT (-120.93943 47.195)',53037975104,'Kittitas'),(117319653,'Tonasket','WA',98855,7,'POINT (-119.43683 48.70854)',53047970500,'Okanogan'),(122018970,'Mukilteo','WA',98275,21,'POINT (-122.29196 47.89908)',53061042006,'Snohomish'),(122026978,'Spokane','WA',99223,3,'POINT (-117.36043 47.63396)',53063004602,'Spokane'),(132158960,'Bainbridge Island','WA',98110,23,'POINT (-122.521 47.62728)',53035090700,'Kitsap'),(133746364,'Walla Walla','WA',99362,16,'POINT (-118.34261 46.07068)',53071920500,'Walla Walla'),(135019286,'Colville','WA',99114,7,'POINT (-117.90454 48.54657)',53065950600,'Stevens'),(140290552,'Moses Lake','WA',98837,13,'POINT (-119.2771 47.13196)',53025011101,'Grant'),(153969406,'Brewster','WA',98812,12,'POINT (-119.78093 48.09967)',53047970800,'Okanogan'),(160215233,'Walla Walla','WA',99362,16,'POINT (-118.34261 46.07068)',53071920801,'Walla Walla'),(161629142,'Rochester','WA',98579,35,'POINT (-123.08743 46.82175)',53067012610,'Thurston'),(167308886,'Wenatchee','WA',98801,12,'POINT (-120.30522 47.41494)',53007961304,'Chelan'),(169217149,'Mazama','WA',98833,12,'POINT (-120.4072 48.59369)',53047970900,'Okanogan'),(172192114,'Bow','WA',98232,40,'POINT (-122.397 48.56045)',53057951900,'Skagit'),(179303659,'Cheney','WA',99004,6,'POINT (-117.57445 47.48928)',53063014100,'Spokane'),(182942336,'East Wenatchee','WA',98802,12,'POINT (-120.29473 47.41515)',53017950300,'Douglas'),(186771742,'Wenatchee','WA',98801,12,'POINT (-120.30522 47.41494)',53007961002,'Chelan'),(199455805,'Kettle Falls','WA',99141,7,'POINT (-118.06211 48.61053)',53065950102,'Stevens'),(205648530,'East Wenatchee','WA',98802,12,'POINT (-120.29473 47.41515)',53017950300,'Douglas'),(207092560,'Seabeck','WA',98380,35,'POINT (-122.81585 47.64509)',53035091301,'Kitsap'),(208685060,'Chewelah','WA',99109,7,'POINT (-117.71555 48.28136)',53065950700,'Stevens'),(211045775,'Yakima','WA',98902,14,'POINT (-120.52301 46.60138)',53077000500,'Yakima'),(211631591,'Edmonds','WA',98020,32,'POINT (-122.37689 47.81116)',53061050700,'Snohomish'),(217972723,'Pullman','WA',99163,9,'POINT (-117.18147 46.73015)',53075000400,'Whitman'),(227657153,'Spokane','WA',99207,3,'POINT (-117.3973 47.67573)',53063001500,'Spokane'),(232835627,'Winthrop','WA',98862,12,'POINT (-120.17739 48.47396)',53047970900,'Okanogan'),(347393252,'Bremerton','WA',98312,35,'POINT (-122.66122 47.56573)',53035080900,'Kitsap'),(474543625,'Leavenworth','WA',98826,12,'POINT (-120.65754 47.5982)',53007960501,'Chelan'),(475013661,'Spokane','WA',99203,6,'POINT (-117.39322 47.63374)',53063004702,'Spokane'),(477967829,'Lummi Island','WA',98262,42,'POINT (-122.68321 48.72043)',53073010900,'Whatcom');
+/*!40000 ALTER TABLE `location` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `location_utility`
+--
+
+DROP TABLE IF EXISTS `location_utility`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `location_utility` (
+  `eu_id` int NOT NULL,
+  `dol_vehicle_id` int NOT NULL,
+  PRIMARY KEY (`eu_id`,`dol_vehicle_id`),
+  KEY `fk_location_utility_location1_idx` (`dol_vehicle_id`),
+  CONSTRAINT `fk_location_utility_electric_utility` FOREIGN KEY (`eu_id`) REFERENCES `electric_utility` (`eu_id`),
+  CONSTRAINT `fk_location_utility_location1` FOREIGN KEY (`dol_vehicle_id`) REFERENCES `location` (`dol_vehicle_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `location_utility`
+--
+
+LOCK TABLES `location_utility` WRITE;
+/*!40000 ALTER TABLE `location_utility` DISABLE KEYS */;
+INSERT INTO `location_utility` VALUES (2,101520156),(13,117319653),(2,122018970),(6,122026978),(2,132158960),(4,133746364),(11,135019286),(7,140290552),(12,153969406),(4,160215233),(2,161629142),(8,167308886),(1,169217149),(2,172192114),(14,179303659),(3,182942336),(8,186771742),(10,199455805),(9,205648530),(2,207092560),(5,208685060),(4,211045775),(2,211631591),(11,217972723),(6,227657153),(1,232835627),(2,347393252),(8,474543625),(6,475013661),(15,477967829);
+/*!40000 ALTER TABLE `location_utility` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `make`
+--
+
+DROP TABLE IF EXISTS `make`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `make` (
+  `make_id` int NOT NULL,
+  `car_make` varchar(45) NOT NULL,
+  PRIMARY KEY (`make_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `make`
+--
+
+LOCK TABLES `make` WRITE;
+/*!40000 ALTER TABLE `make` DISABLE KEYS */;
+INSERT INTO `make` VALUES (1,'AUDI'),(2,'AZURE DYNAMICS'),(3,'BENTLEY'),(4,'BMW'),(5,'CADILLAC'),(6,'CHEVROLET'),(7,'CHRYSLER'),(8,'FIAT'),(9,'FISKER'),(10,'FORD'),(11,'HONDA'),(12,'HYUNDAI'),(13,'JAGUAR'),(14,'JEEP'),(15,'KIA'),(16,'LAND ROVER'),(17,'LEXUS'),(18,'LINCOLN'),(19,'MERCEDES-BENZ'),(20,'MINI'),(21,'MITSUBISHI'),(22,'NISSAN'),(23,'POLESTAR'),(24,'PORSCHE'),(25,'SMART'),(26,'SUBARU'),(27,'TESLA'),(28,'TOYOTA'),(29,'VOLKSWAGEN'),(30,'VOLVO');
+/*!40000 ALTER TABLE `make` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `model`
+--
+
+DROP TABLE IF EXISTS `model`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `model` (
+  `model_id` int NOT NULL,
+  `model_type` varchar(45) NOT NULL,
+  `model_year` int NOT NULL,
+  PRIMARY KEY (`model_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `model`
+--
+
+LOCK TABLES `model` WRITE;
+/*!40000 ALTER TABLE `model` DISABLE KEYS */;
+INSERT INTO `model` VALUES (1,'A3',2018),(2,'TRANSIT CONNECT ELECTRIC',2012),(3,'BENTAYGA',2020),(4,'X5',2022),(5,'ELR',2016),(6,'VOLT',2012),(7,'PACIFICA',2019),(8,'500',2013),(9,'KARMA',2012),(10,'FUSION',2014),(11,'CLARITY',2021),(12,'KONA',2020),(13,'I-PACE',2020),(14,'WRANGLER',2022),(15,'NIRO',2022),(16,'RANGE ROVER SPORT',2020),(17,'NX',2022),(18,'AVIATOR',2020),(19,'GLC-CLASS',2020),(20,'COUNTRYMAN',2019),(21,'OUTLANDER',2021),(22,'LEAF',2018),(23,'PS2',2021),(24,'TAYCAN',2020),(25,'FORTWO ELECTRIC DRIVE',2014),(26,'CROSSTREK',2019),(27,'MODEL 3',2019),(28,'PRIUS PRIME',2018),(29,'E-GOLF',2016),(30,'XC60',2019);
+/*!40000 ALTER TABLE `model` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `most_expensive_ev`
+--
+
+DROP TABLE IF EXISTS `most_expensive_ev`;
+/*!50001 DROP VIEW IF EXISTS `most_expensive_ev`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `most_expensive_ev` AS SELECT 
+ 1 AS `car_make`,
+ 1 AS `vin_number`,
+ 1 AS `base_msrp`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `total_evs_in_wa`
+--
+
+DROP TABLE IF EXISTS `total_evs_in_wa`;
+/*!50001 DROP VIEW IF EXISTS `total_evs_in_wa`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `total_evs_in_wa` AS SELECT 
+ 1 AS `vin_number`,
+ 1 AS `ev_type`,
+ 1 AS `electric_range`,
+ 1 AS `base_msrp`,
+ 1 AS `dol_vehicle_id`,
+ 1 AS `city`,
+ 1 AS `state`,
+ 1 AS `postal_code`,
+ 1 AS `legislative_district`,
+ 1 AS `vehicle_location`,
+ 1 AS `2020_census_tract`,
+ 1 AS `county`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Final view structure for view `avg_msrp_by_ev_type`
+--
+
+/*!50001 DROP VIEW IF EXISTS `avg_msrp_by_ev_type`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `avg_msrp_by_ev_type` AS select `cars`.`ev_type` AS `ev_type`,avg(`cars`.`base_msrp`) AS `avg_msrp` from `cars` group by `cars`.`ev_type` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `ev_type_statistic`
+--
+
+/*!50001 DROP VIEW IF EXISTS `ev_type_statistic`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `ev_type_statistic` AS select `cars`.`ev_type` AS `ev_type`,min(`cars`.`electric_range`) AS `MIN(electric_range)`,max(`cars`.`electric_range`) AS `MAX(electric_range)`,avg(`cars`.`electric_range`) AS `AVG(electric_range)` from ((`cars` join `make` on((`cars`.`make_id` = `make`.`make_id`))) join `model` on((`cars`.`model_id` = `model`.`model_id`))) group by `cars`.`ev_type` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `evs_with_range_above_200`
+--
+
+/*!50001 DROP VIEW IF EXISTS `evs_with_range_above_200`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `evs_with_range_above_200` AS select `cars`.`vin_number` AS `vin_number`,`make`.`car_make` AS `car_make`,`model`.`model_type` AS `model_type`,`model`.`model_year` AS `model_year`,`cars`.`ev_type` AS `ev_type`,`cars`.`electric_range` AS `electric_range` from ((`cars` join `make` on((`cars`.`make_id` = `make`.`make_id`))) join `model` on((`cars`.`model_id` = `model`.`model_id`))) where (`cars`.`electric_range` > 200) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `most_expensive_ev`
+--
+
+/*!50001 DROP VIEW IF EXISTS `most_expensive_ev`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `most_expensive_ev` AS select `make`.`car_make` AS `car_make`,`cars`.`vin_number` AS `vin_number`,`cars`.`base_msrp` AS `base_msrp` from (`cars` join `make` on((`cars`.`make_id` = `make`.`make_id`))) where (`cars`.`base_msrp` = (select max(`cars`.`base_msrp`) from `cars` where (`cars`.`base_msrp` > 0))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `total_evs_in_wa`
+--
+
+/*!50001 DROP VIEW IF EXISTS `total_evs_in_wa`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `total_evs_in_wa` AS select `cars`.`vin_number` AS `vin_number`,`cars`.`ev_type` AS `ev_type`,`cars`.`electric_range` AS `electric_range`,`cars`.`base_msrp` AS `base_msrp`,`car_destination`.`dol_vehicle_id` AS `dol_vehicle_id`,`location`.`city` AS `city`,`location`.`state` AS `state`,`location`.`postal_code` AS `postal_code`,`location`.`legislative_district` AS `legislative_district`,`location`.`vehicle_location` AS `vehicle_location`,`location`.`2020_census_tract` AS `2020_census_tract`,`location`.`county` AS `county` from ((`cars` join `car_destination` on((`cars`.`vin_number` = `car_destination`.`vin_number`))) join `location` on((`car_destination`.`dol_vehicle_id` = `location`.`dol_vehicle_id`))) where (`location`.`state` = 'WA') */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-12-15 22:14:12
