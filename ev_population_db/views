@@ -1,0 +1,108 @@
+View 1) 
+Name: total_evs_in_wa
+View Purpose: Show information on cars registered in Washington
+
+CREATE VIEW total_evs_in_wa AS
+SELECT 
+vin_number,
+ev_type,
+electric_range,
+base_msrp,
+dol_vehicle_id,
+city,
+state,
+postal_code,
+legislative_district,
+vehicle_location,
+2020_census_tract,
+county
+FROM cars
+JOIN car_destination USING(vin_number)
+JOIN location USING(dol_vehicle_id)
+WHERE state = 'WA';
+
+
+View 2)
+
+Name: ev_type_statistic
+View Purpose: Show the lowest, highest, and average range for both ev types (PHEV and BEV)
+
+CREATE VIEW ev_type_statistic AS
+SELECT ev_type,
+MIN(electric_range),
+MAX(electric_range),
+AVG(electric_range)
+FROM cars
+JOIN make USING (make_id)
+JOIN model USING (model_id)
+GROUP BY ev_type;
+
+
+View 3) 
+Name: avg_msrp_by_ev_type
+View Purpose: Show average msrp for each of the electric vehicle type
+
+CREATE VIEW avg_msrp_by_ev_type AS
+SELECT  
+ev_type,
+AVG(base_msrp) AS avg_msrp
+FROM cars
+GROUP BY ev_type;
+
+
+
+
+View 4)
+Name: evs_with_range_above_200
+Purpose: Show which vehicles have range greater than 200 miles
+
+CREATE VIEW evs_with_range_above_200 AS
+SELECT 
+vin_number,
+car_make,
+model_type,
+model_year,
+ev_type,
+electric_range
+FROM cars
+JOIN make USING(make_id)
+JOIN model USING(model_id)
+WHERE electric_range > 200;
+
+
+
+View 5)
+Name: most_expensive_ev
+Purpose: Show most expensive electric vehicle
+
+CREATE VIEW most_expensive_ev AS
+SELECT 
+car_make,
+vin_number,
+base_msrp
+FROM cars
+JOIN make USING(make_id)
+WHERE base_msrp = 
+(
+SELECT MAX(base_msrp)
+FROM cars
+WHERE base_msrp > 0
+)
+;
+
+Name: is_cafv_eligable
+Purpose: shows cars that are cafv eligible
+
+CREATE VIEW is_cafv_eligable AS
+SELECT
+car_make,
+model_type, 
+COUNT(vin_number) AS total_vehicles,
+MIN(electric_range) AS min_range
+MAX(electric_range) AS max_range
+AVG(electric_range) AS avg_range
+FROM cars
+JOIN make USING(make_id)
+JOIN model USING(model_id)
+JOIN cafv USING(cafv_id)
+WHERE cafv_id = 1
